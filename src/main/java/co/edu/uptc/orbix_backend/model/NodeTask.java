@@ -1,28 +1,57 @@
 package co.edu.uptc.orbix_backend.model;
+
 import java.util.ArrayList;
 import java.util.List;
 
+public class NodeTask implements TaskComp {
 
-public class NodeTask {
+    private String name;
+    private NodeTask parent;
+    private List<TaskComp> children = new ArrayList<>();
 
-  private String name;
-  private List<Object> children;
+    public NodeTask() {}
 
-  public NodeTask(String name) {
-    this.name = name;
-    children = new ArrayList<>();
-  }
+    public NodeTask(String name) {
+        this.name = name;
+    }
 
-  public void add(Object task){
-    children.add(task);
-  }
+    
+    public void add(TaskComp comp) {
+        if (comp instanceof NodeTask) {
+            ((NodeTask) comp).parent = this;
+        }
+        children.add(comp);
+    }
 
-  public List<Object> getChildren() {
-    return children;
-  }
+    public List<TaskComp> getChildren() {
+        return children;
+    }
 
-  public String getNombre() {
-    return name;
-  }
+    public NodeTask getParent() {
+        return parent;
+    }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    
+    @Override
+    public double getCost() {
+        double total = 0;
+        for (TaskComp c : children) {
+            total += c.getCost();
+        }
+        return total;
+    }
+
+    @Override
+    public int getDuration() {
+        int total = 0;
+        for (TaskComp c : children) {
+            total += c.getDuration();
+        }
+        return total;
+    }
 }
